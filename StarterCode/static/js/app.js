@@ -1,25 +1,49 @@
 //use d3 to read in samples.json
 path = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json';
 // let samples = [];
-var samples = d3.json(path).then(data => {
-    return Object.entries(data);
-});
-console.log(samples);
+// var samples = d3.json(path).then(data => {
+//     return Object.entries(data);
+// });
+// console.log(samples);
 
 
 //check for proper loading
 d3.json(path).then(data => {
     // console.log(data);
-    var selDataset = d3.select("#selDataset");
+    var chooser = document.getElementById('selDataset')
+    var selDataset = d3.select(chooser);
+
     var options = selDataset.selectAll('option')
-    .data(Object.values(data.names))
-    .enter()
-    .append('option')
-    .attr('value', d => {return d;})
-    .text(d=> {return d;})
+        .data(Object.values(data.names))
+        .enter()
+        .append('option')
+        .attr('value', d => { return d; })
+        .text(d => { return d; });
+    
+    var plotBar = d3.select('#bar')
+    function changePlot(choice) {
+        var trace1 = {
+            x: data.samples[choice].otu_ids,
+            y: data.samples[choice].otu_labels,
+            type: 'bar'
+            // orientation: 'h'
+        };
+        var layout = {
+            title: choice
+        };
+        updatePlotly.newPlot(plotBar, [trace1], layout)
+
+    }
+
+    selDataset.on('change', function() {
+        var choice = chooser.value;
+        changePlot(choice);
+    });
+
+    var defaultChoice = data.samples[0];
+    changePlot(defaultChoice);
 });
 
-//selDataset variable
 
 // console.log(selDataset)
 // Object.entries(samples.names).forEach(([k, v]) => {
