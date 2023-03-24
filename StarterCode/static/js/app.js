@@ -61,24 +61,52 @@ function bubblePlot(sample_id) {
         var samples = data.samples;
         var selection = samples.filter(sample=> sample.id==sample_id)[0];
         
-        var y_series = selection.otu_ids.slice(0,10).map(otu_id => "OTU " + otu_id).reverse();
-        
-        var trace1 = {
-            x: selection.sample_values.slice(0,10).reverse(),
-            y: y_series,
-            text: selection.otu_labels.slice(0,10).reverse(),
-            type: 'bar',
-            orientation: 'h'
+               
+        var trace2 = {
+            x: selection.otu_ids,
+            y: selection.sample_values,
+            marker: {
+                color: selection.otu_ids,
+                size: selection.sample_values,
+            },
+            text: selection.otu_labels,
+            mode: 'markers'
+            
         };
         var layout = {
             title: "Test Subject " + selection.id
         };
-        Plotly.newPlot("bubble", [trace1], layout)
+        Plotly.newPlot("bubble", [trace2], layout)
+    });
+}
+function bubblePlot(sample_id) {
+    console.log(sample_id);
+    d3.json(path).then(data => {
+        var samples = data.samples;
+        var selection = samples.filter(sample=> sample.id==sample_id)[0];
+        
+               
+        var trace2 = {
+            x: selection.otu_ids,
+            y: selection.sample_values,
+            marker: {
+                color: selection.otu_ids,
+                size: selection.sample_values,
+            },
+            text: selection.otu_labels,
+            mode: 'markers'
+            
+        };
+        var layout = {
+            title: "Test Subject " + selection.id
+        };
+        Plotly.newPlot("bubble", [trace2], layout)
     });
 }
 
 function optionChanged(sample_id) {
     barPlot(sample_id);
     bubblePlot(sample_id);
+    
 }
 
