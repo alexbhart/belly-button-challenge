@@ -27,15 +27,29 @@ d3.json(path).then(data => {
     
 
     var defaultChoice = data.samples[0];
-    console.log(data.samples[5]);
+    // console.log(data.samples[5]);
     barPlot(defaultChoice.id);
     bubblePlot(defaultChoice.id);
     gaugePlot(defaultChoice.id);
+    demoData(defaultChoice.id);
 
     
 });
+
+function demoData(sample_id) {
+    d3.json(path).then(data => {
+        var samples = data.metadata;
+        var selection = samples.filter(sample => sample.id == sample_id)[0];
+
+        var sampleMeta = d3.select("#sample-metadata");
+        var panelBody = sampleMeta.select(".panel-body")
+        panelBody.text('Subject ID' + selection.id)
+
+
+    })
+}
 function barPlot(sample_id) {
-    console.log(sample_id);
+    // console.log(sample_id);
     d3.json(path).then(data => {
         var samples = data.samples;
         var selection = samples.filter(sample=> sample.id==sample_id)[0];
@@ -48,24 +62,26 @@ function barPlot(sample_id) {
             text: selection.otu_labels.slice(0,10).reverse(),
             type: 'bar',
             orientation: 'h'
+            
         };
         var layout = {
             title: "Test Subject " + selection.id
+            
         };
         Plotly.newPlot("bar", [trace1], layout)
     });
 }
 
 function bubblePlot(sample_id) {
-    console.log(sample_id);
+    // console.log(sample_id);
     d3.json(path).then(data => {
         var samples = data.samples;
         var selection = samples.filter(sample=> sample.id==sample_id)[0];
         
                
         var trace2 = {
-            x: selection.otu_ids,
-            y: selection.sample_values,
+            x: selection.otu_ids.slice(0,25),
+            y: selection.sample_values.slice(0,25),
             marker: {
                 color: selection.otu_ids,
                 size: selection.sample_values,
@@ -81,7 +97,7 @@ function bubblePlot(sample_id) {
     });
 }
 function gaugePlot(sample_id) {
-    console.log(sample_id);
+    // console.log(sample_id);
     d3.json(path).then(data => {
         var samples = data.metadata;
         var selection = samples.filter(sample => sample.id == sample_id)[0];
@@ -125,6 +141,6 @@ function optionChanged(sample_id) {
     barPlot(sample_id);
     bubblePlot(sample_id);
     gaugePlot(sample_id);
-    
+    demoData(sample_id);
 }
 
