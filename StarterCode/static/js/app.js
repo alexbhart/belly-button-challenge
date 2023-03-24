@@ -12,7 +12,7 @@ var chooser = document.getElementById('selDataset')
 var selDataset = d3.select(chooser);
 
 d3.json(path).then(data => {
-    // console.log(data);
+    console.log(data);
     
 
     var options = selDataset.selectAll('option')
@@ -30,6 +30,7 @@ d3.json(path).then(data => {
     console.log(data.samples[5]);
     barPlot(defaultChoice.id);
     bubblePlot(defaultChoice.id);
+    gaugePlot(defaultChoice.id);
 
     
 });
@@ -79,34 +80,51 @@ function bubblePlot(sample_id) {
         Plotly.newPlot("bubble", [trace2], layout)
     });
 }
-function bubblePlot(sample_id) {
+function gaugePlot(sample_id) {
     console.log(sample_id);
     d3.json(path).then(data => {
-        var samples = data.samples;
-        var selection = samples.filter(sample=> sample.id==sample_id)[0];
-        
-               
-        var trace2 = {
-            x: selection.otu_ids,
-            y: selection.sample_values,
-            marker: {
-                color: selection.otu_ids,
-                size: selection.sample_values,
+        var samples = data.metadata;
+        var selection = samples.filter(sample => sample.id == sample_id)[0];
+
+
+        var trace3 = {
+            domain: {
+                x: [0,1],
+                y: [0,1]
             },
-            text: selection.otu_labels,
-            mode: 'markers'
-            
+            value: selection.wfreq,
+            type: 'indicator',
+            mode: 'gauge+number',
+            gauge: {
+                axis: {range: [0,10]},
+                steps: [
+                    {
+                        range: [0,1], color: 'gray',
+                        range: [1,2], color: 'lightgray',
+                        range: [2,3], color: 'green',
+                        range: [3,4], color: 'lilac',
+                        range: [4,5], color: 'olive',
+                        range: [5,6], color: 'cerulean',
+                        range: [6,7], color: 'mauve',
+                        range: [7,8], color: 'purple',
+                        range: [8,9], color: 'lightpink',
+                        range: [9,10], color: 'lightgreen',
+                    }
+                ]
+            }
+
         };
         var layout = {
-            title: "Test Subject " + selection.id
+            title: "Wash Frequency"
         };
-        Plotly.newPlot("bubble", [trace2], layout)
+        Plotly.newPlot("gauge", [trace3], layout)
     });
 }
 
 function optionChanged(sample_id) {
     barPlot(sample_id);
     bubblePlot(sample_id);
+    gaugePlot(sample_id);
     
 }
 
