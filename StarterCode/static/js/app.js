@@ -7,11 +7,13 @@ path = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/
 // console.log(samples);
 
 
-//check for proper loading
+//function for barPlot on change
+var chooser = document.getElementById('selDataset')
+var selDataset = d3.select(chooser);
+
 d3.json(path).then(data => {
     // console.log(data);
-    var chooser = document.getElementById('selDataset')
-    var selDataset = d3.select(chooser);
+    
 
     var options = selDataset.selectAll('option')
         .data(Object.values(data.names))
@@ -20,60 +22,63 @@ d3.json(path).then(data => {
         .attr('value', d => { return d; })
         .text(d => { return d; });
     
-    var plotBar = d3.select('#bar')
-    function changePlot(choice) {
-        var trace1 = {
-            x: data.samples[choice].otu_ids,
-            y: data.samples[choice].otu_labels,
-            type: 'bar'
-            // orientation: 'h'
-        };
-        var layout = {
-            title: choice
-        };
-        updatePlotly.newPlot(plotBar, [trace1], layout)
+        
 
-    }
-
-    selDataset.on('change', function() {
-        var choice = chooser.value;
-        changePlot(choice);
-    });
-
-    var defaultChoice = data.samples[0];
-    changePlot(defaultChoice);
-});
-
-
-// console.log(selDataset)
-// Object.entries(samples.names).forEach(([k, v]) => {
-//     selDataset.append('optionChanged').text(k).attr("value", k)
-// });
-// console.log(samples.otu_ids)
-// function init() {
-//     let data = [{
-//       values: samples.samples.otu_ids,
-//       labels: otu_labels,
-//       type: "bar"
-//     //   orientation: 'h'
-//     }];
-  
-//     let layout = {
-//       height: 600,
-//       width: 800
-//     };
-  
-//     Plotly.newPlot("col-md-5", data, layout);
-//   }
-
-
-// selDataset.on('change', function () {
-//     var dataset = selDataset.property('value');
     
 
+    var defaultChoice = data.samples[0];
+    console.log(data.samples[5]);
+    barPlot(defaultChoice.id);
+    bubblePlot(defaultChoice.id);
 
-// })
+    
+});
+function barPlot(sample_id) {
+    console.log(sample_id);
+    d3.json(path).then(data => {
+        var samples = data.samples;
+        var selection = samples.filter(sample=> sample.id==sample_id)[0];
+        // console.log(selection);
+        var y_series = selection.otu_ids.slice(0,10).map(otu_id => "OTU " + otu_id).reverse();
+        // console.log(y_series);
+        var trace1 = {
+            x: selection.sample_values.slice(0,10).reverse(),
+            y: y_series,
+            text: selection.otu_labels.slice(0,10).reverse(),
+            type: 'bar',
+            orientation: 'h'
+        };
+        var layout = {
+            title: "Test Subject " + selection.id
+        };
+        Plotly.newPlot("bar", [trace1], layout)
+    });
+}
 
-// for (var i = 0; i < samples.names; i++) {
-//     selDataset.append('option').text(samples.names[i]).attr('value', samples.names[i])
-// };
+function bubblePlot(sample_id) {
+    console.log(sample_id);
+    d3.json(path).then(data => {
+        var samples = data.samples;
+        var selection = samples.filter(sample=> sample.id==sample_id)[0];
+        
+        var y_series = selection.otu_ids.slice(0,10).map(otu_id => "OTU " + otu_id).reverse();
+        
+        var trace1 = {
+            x: selection.sample_values.slice(0,10).reverse(),
+            y: y_series,
+            text: selection.otu_labels.slice(0,10).reverse(),
+            type: 'bar',
+            orientation: 'h'
+        };
+        var layout = {
+            title: "Test Subject " + selection.id
+        };
+        Plotly.newPlot("bubble", [trace1], layout)
+    });
+}
+
+function optionChanged(sample_id) {
+    barPlot(sample_id);
+    bubblePlot(sample_id);
+}
+
