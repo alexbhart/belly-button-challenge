@@ -42,9 +42,14 @@ function demoData(sample_id) {
         var selection = samples.filter(sample => sample.id == sample_id)[0];
 
         var sampleMeta = d3.select("#sample-metadata");
-        var panelBody = sampleMeta.select(".panel-body")
-        panelBody.text('Subject ID' + selection.id)
-
+        var list = d3.select('.list-group')
+                
+        for (var key in selection) {
+            if (selection.hasOwnProperty(key)) {
+              var li = list.append("li")
+                           .attr("class", "list-group-item")
+                           .text(key + ": " + selection[key]); }}
+       
 
     })
 }
