@@ -46,8 +46,8 @@ function demoData(sample_id) {
                 
         for (var key in selection) {
             if (selection.hasOwnProperty(key)) {
-              var li = list.append("li")
-                           .attr("class", "list-group-item")
+              var li = sampleMeta.append("panel-body")
+                           .attr("class", "panel-body")
                            .text(key + ": " + selection[key]); }}
        
 
